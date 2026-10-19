@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#090d22">
+    <title>Orbital Drift — Course aux cristaux</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="libraries/p5.min.js"></script>
+    <script src="vehicle.js"></script>
+    <script src="obstacle.js"></script>
+    <script src="asteroid.js"></script>
+    <script src="blackHole.js"></script>
+    <script src="target.js"></script>
+    <script src="flocking.js"></script>
+    <script src="pathFollowing.js"></script>
+    <script src="ship.js"></script>
+    <script src="hunter.js"></script>
+    <script src="boss.js"></script>
+    <script src="missile.js"></script>
+    <script src="gameRules.js"></script>
+    <script src="hud.js"></script>
+    <script src="sketch.js" defer></script>
+  </head>
+  <body>
+    <main class="game-ui">
+      <header class="brand">
+        <span class="brand-symbol">✦</span>
+        <div><strong>ORBITAL DRIFT</strong><small>CRYSTAL RUN · SECTOR 07</small></div>
+      </header>
+
+      <button id="panels-toggle" class="panels-toggle" type="button" aria-controls="system-diagnostics flight-control" aria-expanded="false" hidden>
+        AFFICHER LES PANNEAUX
+      </button>
+
+      <section id="system-diagnostics" class="panel diagnostics" aria-label="Diagnostics du jeu">
+        <h1><span class="live-dot"></span> SYSTEM DIAGNOSTICS</h1>
+        <div class="readout"><span>ANTI-GRAVITÉ</span><strong id="gravity-state">OFF</strong></div>
+        <div class="readout"><span>AUTO-TIR</span><strong id="auto-state">OFF</strong></div>
+        <div class="readout"><span>PILOTAGE</span><strong id="flight-mode-state">MISSION</strong></div>
+        <div class="readout"><span>DIFFICULTÉ</span><strong id="difficulty-state">PILOTE</strong></div>
+        <div class="readout"><span>ÉTAPE / SECTEUR</span><strong id="stage-readout">01 / 05 · DÉCOLLAGE</strong></div>
+        <div class="readout"><span id="stage-objective">RAMASSER DES CRISTAUX</span><strong id="stage-progress">0 / 3</strong></div>
+        <div class="mission-track stage-track" role="progressbar" aria-label="Progression de l'étape" aria-valuemin="0" aria-valuemax="60" aria-valuenow="0">
+          <div id="stage-fill"></div>
+        </div>
+        <div class="readout"><span>VAGUE / SUIVANTE</span><strong id="wave-readout">01 · 25s</strong></div>
+        <button id="pause-button" class="pause-button" type="button" aria-pressed="false" disabled>PAUSE [ESPACE]</button>
+        <div class="readout"><span>BOUCLIER</span><strong id="shield-state">PRÊT</strong></div>
+        <div class="shield-track"><div id="shield-fill"></div></div>
+        <div class="readout"><span>TROU NOIR</span><strong id="black-hole-state">PRÊT</strong></div>
+        <div class="readout"><span>CRISTAUX</span><strong id="crystal-count">0</strong></div>
+        <div class="readout"><span>ENNEMIS</span><strong id="enemy-count">0</strong></div>
+        <div class="readout"><span>BOSS</span><strong id="boss-health">INACTIF</strong></div>
+        <div class="readout"><span>PLANÈTES</span><strong id="planet-count">0</strong></div>
+        <div class="readout"><span>ASTÉROÏDES</span><strong id="asteroid-count">0</strong></div>
+        <div class="readout"><span>ENTITÉS ACTIVES</span><strong id="entity-count">0</strong></div>
+        <div class="readout score-row"><span>SCORE</span><strong id="score">000</strong></div>
+        <div class="readout"><span>SCORE BONUS</span><strong id="objective-progress">000 / 300</strong></div>
+        <div class="mission-track final-mission-track" role="progressbar" aria-label="Progression du score bonus" aria-valuemin="0" aria-valuemax="300" aria-valuenow="0">
+          <div id="mission-fill"></div>
+        </div>
+        <div class="readout"><span>RECORD</span><strong id="best-score">000</strong></div>
+        <div class="readout"><span>COQUE</span><strong id="hull">♥ ♥ ♥</strong></div>
+        <div class="controls">
+          <span><kbd>M</kbd> manuel / IA</span><span><kbd>SOURIS</kbd> ou <kbd>← ↑ → ↓</kbd> piloter</span>
+          <span><kbd>CLIC</kbd> missile</span>
+          <span><kbd>T</kbd> auto-tir</span><span><kbd>B</kbd> bouclier</span>
+          <span><kbd>G</kbd> anti-gravité</span><span><kbd>ESPACE</kbd> pause</span>
+          <span>ENTRER DANS UN TROU NOIR : SORTIR PAR L'AUTRE</span>
+          <span><kbd>MAJ + CLIC</kbd> astéroïde</span>
+          <span><kbd>P</kbd> planète</span><span><kbd>O</kbd> obstacle</span>
+          <span><kbd>D</kbd> debug</span><span><kbd>R</kbd> recommencer</span>
+        </div>
+      </section>
+
+      <aside id="flight-control" class="panel control-panel" aria-label="Commandes de simulation">
+        <div class="control-heading">
+          <button id="control-toggle" class="control-icon control-toggle" type="button" aria-label="Masquer les commandes" aria-controls="control-content" aria-expanded="true">⚙️</button>
+          <div><h2>FLIGHT CONTROL</h2><small>FLEET CONFIGURATION</small></div>
+          <span class="control-live">LIVE</span>
+        </div>
+        <div id="control-content">
+          <label class="speed-label" for="speed-control">
+            <span>VITESSE DE VOL</span><output id="speed-value" for="speed-control">1.4×</output>
+          </label>
+          <input id="speed-control" class="speed-slider" type="range" min="0.5" max="2" step="0.1" value="1.4" aria-label="Régler la vitesse avec le curseur">
+          <div class="speed-scale"><span>MIN</span><span>MAX</span></div>
+          <label class="speed-label parameter-label" for="crystal-count-control">
+            <span>CRISTAUX EN JEU</span><output id="crystal-count-value" for="crystal-count-control">32</output>
+          </label>
+          <input id="crystal-count-control" class="speed-slider" type="range" min="8" max="60" step="1" value="32" aria-label="Régler le nombre de cristaux">
+          <label class="speed-label parameter-label" for="protection-radius-control">
+            <span>PORTÉE DE DÉFENSE</span><output id="protection-radius-value" for="protection-radius-control">180 px</output>
+          </label>
+          <input id="protection-radius-control" class="speed-slider" type="range" min="80" max="300" step="10" value="180" aria-label="Régler la portée de protection des cristaux par les avions rouges">
+          <label class="speed-label parameter-label" for="flight-mode-control">
+            <span>COMPORTEMENT DE FLOTTE</span>
+          </label>
+          <select id="flight-mode-control" class="flight-mode-control" aria-label="Choisir le comportement de la flotte blanche">
+            <option value="mission">MISSION — cristaux</option>
+            <option value="flock">ESSAIM — boids</option>
+            <option value="patrol">PATROUILLE — chemin</option>
+          </select>
+          <button id="manual-control-button" class="shield-button manual-control-button" type="button" aria-pressed="false">PILOTAGE MANUEL [M]</button>
+          <button id="shield-button" class="shield-button" type="button" disabled>ACTIVER LE BOUCLIER <kbd>B</kbd></button>
+          <div class="aircraft-actions">
+            <button id="add-white-plane" class="aircraft-button ally-button" type="button">
+              <span class="aircraft-button-icon">✦</span>
+              <span class="aircraft-button-copy"><strong>AJOUTER ALLIÉ</strong><small>ESCADRILLE BLANCHE</small></span>
+              <span id="white-count" class="aircraft-count">1</span>
+            </button>
+            <button id="add-red-plane" class="aircraft-button enemy-button" type="button">
+              <span class="aircraft-button-icon">✦</span>
+              <span class="aircraft-button-copy"><strong>AJOUTER ENNEMI</strong><small>ESCADRILLE ROUGE</small></span>
+              <span id="red-count" class="aircraft-count">12</span>
+            </button>
+          </div>
+          <p class="control-note"><span></span> <span id="control-mode-note">IA AUTONOME · ÉVITEMENT ACTIF</span></p>
+        </div>
+      </aside>
+
+      <section id="welcome-overlay" class="game-overlay welcome-overlay" aria-labelledby="welcome-title" aria-describedby="welcome-detail">
+        <div class="welcome-card">
+          <p class="game-over-kicker">✦ ORBITAL DRIFT · SECTOR 07 ✦</p>
+          <h2 id="welcome-title">MISSION BRIEFING</h2>
+          <p id="welcome-detail">Pilote ton vaisseau pour traverser 20 niveaux, protéger ton escadrille et défendre la Terre. Récupère des cristaux, résiste aux chasseurs et utilise les portails pour leur échapper.</p>
+          <section class="briefing-details" aria-label="Concept et règles de la mission">
+            <div class="briefing-detail">
+              <h3>OBJECTIF DE MISSION</h3>
+              <p>Traverse 20 niveaux de collecte, de survie et de combat. Après chaque niveau, la simulation s'arrête; un panneau présente l'objectif suivant et te laisse choisir quand continuer. Affronte un boss aux niveaux 5, 10, 15 et 20.</p>
+            </div>
+            <div class="briefing-detail">
+              <h3>PILOTAGE ET STEERING</h3>
+              <p>Le jeu commence en pilotage manuel : déplace la souris pour diriger le vaisseau vers le pointeur, ou maintiens les flèches directionnelles pour le piloter. Avec <kbd>M</kbd>, active l’autopilote : il choisit un cristal proche, évite les planètes et fuit les chasseurs. Les alliés suivent aussi leurs objectifs.</p>
+            </div>
+            <div class="briefing-detail">
+              <h3>CRISTAUX ET COMBAT</h3>
+              <p>Les cristaux cyan donnent des points et des missiles; les dorés rechargent davantage de missiles, les violets restaurent le bouclier et les mauves rapportent 250 points. Un cristal mauve réapparaît sans limite après sa collecte. Clique pour tirer un missile à tête chercheuse; <kbd>T</kbd> active le tir automatique.</p>
+            </div>
+            <div class="briefing-detail">
+              <h3>DANGERS ET PORTAILS</h3>
+              <p>Un contact avec un chasseur, une planète ou le boss termine la partie. Le bouclier <kbd>B</kbd> protège des chasseurs, pas des planètes. Entre dans le petit trou noir <strong>A</strong> pour ressortir par <strong>B</strong>, ou inversement; les deux portails se rechargent pendant 3 secondes.</p>
+            </div>
+            <div class="briefing-detail briefing-detail-wide">
+              <h3>VITESSE ET DIFFICULTÉ</h3>
+              <p>La simulation démarre à 1,4×. Augmente la vitesse jusqu’à 2× avec le curseur du panneau de commandes. Choisis Cadet, Pilote ou As pour régler le nombre de chasseurs, la cadence des vagues et la difficulté du boss.</p>
+            </div>
+          </section>
+          <details id="stage-roadmap" class="stage-roadmap">
+            <summary>CONSULTER LE SCÉNARIO DES 20 NIVEAUX</summary>
+            <ol>
+              <li><strong>Premier contact</strong><span>Ramasser 3 cristaux</span></li>
+              <li><strong>Ceinture d'astéroïdes</strong><span>Survivre 20 secondes</span></li>
+              <li><strong>Patrouille ennemie</strong><span>Détruire 3 chasseurs</span></li>
+              <li><strong>Ravitaillement d'urgence</strong><span>Récupérer 2 cristaux bonus</span></li>
+              <li><strong>Le gardien du secteur</strong><span>Vaincre le boss</span></li>
+              <li><strong>Renforts rouges</strong><span>Ramasser 5 cristaux</span></li>
+              <li><strong>Course contre la vague</strong><span>Survivre 30 secondes</span></li>
+              <li><strong>Briser l'encerclement</strong><span>Détruire 5 chasseurs</span></li>
+              <li><strong>Réserve de munitions</strong><span>Récupérer 3 cristaux bonus</span></li>
+              <li><strong>Croiseur de l'avant-garde</strong><span>Vaincre le boss</span></li>
+              <li><strong>Navigation à vue</strong><span>Ramasser 6 cristaux</span></li>
+              <li><strong>Fuite gravitationnelle</strong><span>Survivre 40 secondes</span></li>
+              <li><strong>Éliminer les poursuiveurs</strong><span>Détruire 6 chasseurs</span></li>
+              <li><strong>Bouclier critique</strong><span>Récupérer 4 cristaux bonus</span></li>
+              <li><strong>Le commandant apparaît</strong><span>Vaincre le boss</span></li>
+              <li><strong>Dernier ravitaillement</strong><span>Ramasser 7 cristaux</span></li>
+              <li><strong>La flotte entière</strong><span>Survivre 50 secondes</span></li>
+              <li><strong>Ouvrir le passage</strong><span>Détruire 8 chasseurs</span></li>
+              <li><strong>Dernière chance</strong><span>Récupérer 5 cristaux bonus</span></li>
+              <li><strong>Bataille de la Terre</strong><span>Vaincre le commandant</span></li>
+            </ol>
+          </details>
+          <div class="next-stage-briefing">
+            <strong>TA PREMIÈRE MISSION · ÉTAPE 01</strong>
+            <span id="first-stage-objective"></span>
+          </div>
+          <div class="difficulty-picker">
+            <span>NIVEAU DE DIFFICULTÉ</span>
+            <div id="difficulty-options" class="difficulty-options" role="group" aria-label="Choisir le niveau de difficulté">
+              <button type="button" class="difficulty-option" data-difficulty="cadet" aria-pressed="false">CADET</button>
+              <button type="button" class="difficulty-option" data-difficulty="pilote" aria-pressed="false">PILOTE</button>
+              <button type="button" class="difficulty-option" data-difficulty="as" aria-pressed="false">AS</button>
+            </div>
+          </div>
+          <p id="difficulty-detail" class="difficulty-detail">12 chasseurs · 1 collision fatale · difficulté équilibrée</p>
+          <div class="welcome-record">MEILLEUR SCORE <strong id="welcome-best-score">000</strong></div>
+          <div class="welcome-controls"><span>Mode initial : manuel</span><span><kbd>M</kbd> manuel / automatique</span><span><kbd>SOURIS</kbd> ou <kbd>← ↑ → ↓</kbd> piloter</span><span><kbd>CLIC</kbd> missile</span><span><kbd>T</kbd> tir auto</span><span><kbd>B</kbd> bouclier</span><span><kbd>G</kbd> anti-gravité</span><span><kbd>ESPACE</kbd> pause</span><span><kbd>R</kbd> recommencer</span></div>
+          <p class="shield-instructions">Le bouclier <kbd>B</kbd> protège toute l'escadrille pendant 4 s. Recharge : 15 s.</p>
+          <button id="start-button" class="restart-button start-button" type="button">JOUER <span>[ ENTRÉE ]</span></button>
+        </div>
+      </section>
+
+      <div id="wave-announcement" class="wave-announcement" aria-live="polite" hidden></div>
+
+      <section id="game-over-overlay" class="game-overlay game-over-overlay" aria-labelledby="game-over-title" aria-describedby="game-over-detail" hidden>
+        <div class="game-over-card">
+          <p class="game-over-kicker">✦ FLIGHT TERMINATED ✦</p>
+          <h2 id="game-over-title" class="game-over-title">
+            <span class="game-over-word game-over-game" data-text="GAME">GAME</span>
+            <span class="game-over-skull" aria-hidden="true">☠</span>
+            <span class="game-over-word game-over-over" data-text="OVER">OVER</span>
+          </h2>
+          <p id="game-over-detail" class="game-over-detail">UN CHASSEUR ROUGE A TOUCHÉ VOTRE FLOTTE</p>
+          <div class="final-score">SCORE <strong id="final-score">000</strong><span>RECORD</span><strong id="final-best-score">000</strong></div>
+          <button id="restart-button" class="restart-button" type="button">RECOMMENCER CE NIVEAU <span>[ R ]</span></button>
+          <button id="restart-first-level-button" class="briefing-button" type="button">RECOMMENCER AU NIVEAU 1</button>
+          <button id="briefing-button" class="briefing-button" type="button">CHOISIR UNE AUTRE DIFFICULTÉ</button>
+        </div>
+      </section>
+      <section id="pause-overlay" class="game-overlay pause-overlay" aria-labelledby="pause-title" hidden>
+        <div class="welcome-card pause-card">
+          <p class="game-over-kicker">✦ PAUSE TACTIQUE ✦</p>
+          <h2 id="pause-title">SIMULATION EN PAUSE</h2>
+          <p>La simulation est suspendue. Tu peux modifier les réglages et les escadrilles dans les panneaux, puis reprendre.</p>
+          <button id="resume-button" class="restart-button start-button" type="button">REPRENDRE [ ESPACE ]</button>
+        </div>
+      </section>
+      <section id="stage-complete-overlay" class="game-overlay stage-complete-overlay" aria-labelledby="stage-complete-title" aria-describedby="stage-complete-detail" hidden>
+        <div class="welcome-card stage-complete-card">
+          <p class="game-over-kicker">✦ OBJECTIF ATTEINT ✦</p>
+          <h2 id="stage-complete-title">ÉTAPE TERMINÉE</h2>
+          <p id="stage-complete-detail">La simulation est suspendue. Prépare-toi pour la suite.</p>
+          <div class="next-stage-briefing">
+            <strong id="next-stage-title">ÉTAPE SUIVANTE</strong>
+            <span id="next-stage-objective"></span>
+          </div>
+          <button id="next-stage-button" class="restart-button start-button" type="button">PASSER À L'ÉTAPE SUIVANTE</button>
+        </div>
+      </section>
+
+      <footer class="panel weapon-panel" aria-label="Armement">
+        <div class="weapon-mark">⌁</div>
+        <div class="weapon-data">
+          <div class="ammo-line"><span>AMMO</span><strong id="ammo">50 / 50</strong></div>
+          <div class="ammo-track"><div id="ammo-fill"></div></div>
+          <div class="cannon-line">CANNON <strong id="cannon-state">READY</strong></div>
+        </div>
+        <div class="score-star"><span>★</span><strong id="score-small">000</strong></div>
+      </footer>
+      <div class="footer-label">COLLECT THE CRYSTALS · EVADE THE RED FLEET</div>
+    </main>
+  </body>
+</html>
