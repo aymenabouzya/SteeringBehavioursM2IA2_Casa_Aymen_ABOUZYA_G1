@@ -1,81 +1,163 @@
-# Orbital Drift — course aux cristaux
+# Orbital Drift — Course aux cristaux
 
-Ouvrir `index.html` avec Live Server pour lancer le jeu. Avant chaque départ, l'écran de briefing présente la campagne de 20 niveaux, le pilotage manuel et automatique, les cristaux, les combats, les portails A/B et les réglages. Le vaisseau du joueur démarre en mode manuel : déplace la souris pour le diriger rapidement vers le pointeur; plus la souris bouge vite, plus le vaisseau accélère pour la suivre. Quand elle s'arrête, sa vitesse maximale revient progressivement à la normale. Le bouton de pilotage ou la touche M bascule en mode automatique, où il poursuit le cristal vivant le plus proche, évite les corps célestes et fuit les avions rouges qui approchent. Le mode sélectionné reste actif entre les parties jusqu'à ce que le joueur le change. Les chasseurs rouges gardent les cristaux et interceptent les avions blancs qui s'en approchent. Le joueur peut tirer des missiles à tête chercheuse, activer le tir automatique et inverser l'attraction des planètes. En difficulté Pilote, les vagues arrivent toutes les 25 secondes, ajoutent deux chasseurs (jusqu'à 28) et accélèrent progressivement les ennemis jusqu'à un plafond de 50 %.
+[Code source](https://github.com/aymenabouzya/SteeringBehavioursM2IA2_Casa_Aymen_ABOUZYA_G1)
 
-L'écran de briefing propose trois difficultés, sauvegardées dans le navigateur et sélectionnées avant la partie :
+Jeu d’action spatial en p5.js autour des **steering behaviors** de Craig W. Reynolds. Pilote un vaisseau dans une galaxie, récupère des cristaux et combats les chasseurs rouges jusqu’au boss final. La souris permet de diriger le joueur en pilotage manuel ; en mode automatique, son vaisseau poursuit les cristaux, évite les obstacles et fuit les ennemis.
 
-- **Cadet** : 7 chasseurs, vagues toutes les 35 secondes, renforts limités et boss à 3 points de vie.
-- **Pilote** : 12 chasseurs, vagues toutes les 25 secondes et boss à 5 points de vie.
-- **As** : 16 chasseurs, vagues toutes les 20 secondes, renforts et vitesse ennemie accrus, boss à 7 points de vie.
+Le projet transforme des comportements de pilotage en une campagne jouable de 20 niveaux : escadrilles autonomes, trois difficultés, missiles à tête chercheuse, bouclier, portails de téléportation et décor spatial généré par le jeu.
 
-La campagne comprend 20 niveaux : **1 Premier contact** (ramasser 3 cristaux), **2 Ceinture d'astéroïdes** (survivre 20 s), **3 Patrouille ennemie** (détruire 3 chasseurs), **4 Ravitaillement d'urgence** (récupérer 2 cristaux bonus), **5 Le gardien du secteur** (vaincre le boss); **6 Renforts rouges** (5 cristaux), **7 Course contre la vague** (survivre 30 s), **8 Briser l'encerclement** (détruire 5 chasseurs), **9 Réserve de munitions** (3 cristaux bonus), **10 Croiseur de l'avant-garde** (boss); **11 Navigation à vue** (6 cristaux), **12 Fuite gravitationnelle** (survivre 40 s), **13 Éliminer les poursuiveurs** (détruire 6 chasseurs), **14 Bouclier critique** (4 cristaux bonus), **15 Le commandant apparaît** (boss); **16 Dernier ravitaillement** (7 cristaux), **17 La flotte entière** (survivre 50 s), **18 Ouvrir le passage** (détruire 8 chasseurs), **19 Dernière chance** (5 cristaux bonus) et **20 Bataille de la Terre** (vaincre le commandant). Le briefing permet de consulter cette liste complète. Avant le premier départ et à chaque transition, un panneau présente une consigne précise et la quantité à atteindre; pour un boss, il affiche aussi ses points de vie selon la difficulté. Le HUD affiche le numéro et la progression de chaque niveau. À chaque objectif atteint, la simulation s'arrête et le panneau présente le prochain objectif; clique sur **PASSER À L'ÉTAPE** pour continuer. Les boss arrivent aux niveaux 5, 10, 15 et 20 et gagnent 2 points de vie à chaque apparition. Chaque transition augmente aussi les renforts et la vitesse des chasseurs. La victoire est acquise en détruisant le commandant du niveau 20. Le score dépend du nombre de cristaux capturés et d'ennemis détruits; il constitue un bonus et un record, pas une condition de victoire.
+## Démonstration
 
-Les cristaux standards rapportent 25 points et une munition. Des cristaux bonus dorés rechargent jusqu'à 10 missiles; les violets restaurent le bouclier. Chaque cristal bonus donne 75 points. À chaque niveau de boss, celui-ci poursuit le joueur avec les mêmes comportements de pilotage des chasseurs; son indicateur de vie est visible au-dessus de lui et chaque missile lui retire un point de vie. Sa collision reste fatale, même si le bouclier est actif.
+- [Jouer en ligne avec GitHub Pages](https://aymenabouzya.github.io/SteeringBehavioursM2IA2_Casa_Aymen_ABOUZYA_G1/)
+- [Code source du projet](https://github.com/aymenabouzya/SteeringBehavioursM2IA2_Casa_Aymen_ABOUZYA_G1)
 
-Deux petits trous noirs, **A** et **B**, apparaissent loin des planètes et des autres corps célestes. En entrant dans l'un, le joueur ressort par l'autre. Les deux portails se rechargent ensuite pendant 3 secondes; leur état est indiqué dans le HUD.
+## Jouer
 
-Les records sont séparés par difficulté. **Espace**, **Échap** ou le bouton de pause suspend/reprend la simulation et ses minuteries; l'écran de pause permet de reprendre. Après une défaite, **RECOMMENCER CE NIVEAU** et **R** relancent le niveau perdu depuis le début avec le score et les ressources réinitialisés; **RECOMMENCER AU NIVEAU 1** redémarre la campagne. Après une victoire, ces options permettent de rejouer le niveau final ou de relancer la campagne. **CHOISIR UNE AUTRE DIFFICULTÉ** revient au briefing sans recharger la page.
+1. Ouvrir le jeu depuis GitHub Pages, ou lancer `index.html` avec Live Server.
+2. Choisir une difficulté dans l’écran de briefing.
+3. Cliquer sur **JOUER** ou appuyer sur **Entrée**.
+4. Piloter le vaisseau à la souris ou au clavier, récupérer les cristaux et terminer les objectifs de chaque niveau.
+5. Tirer sur les chasseurs et les boss en évitant les collisions avec les ennemis et les corps célestes.
 
-Les panneaux **SYSTEM DIAGNOSTICS** et **FLIGHT CONTROL** sont visibles au briefing et après la partie, puis se masquent au lancement pour dégager l'écran. Le bouton **AFFICHER LES PANNEAUX** les révèle à la demande pendant la partie; **MASQUER LES PANNEAUX** les replie de nouveau. Les commandes clavier restent disponibles.
+### Commandes
 
-La vitesse de vol démarre à **1,4×**. Tu peux l'augmenter à tout moment avec le curseur **VITESSE DE VOL**, jusqu'à **2×**. Le réglage choisi reste actif entre les parties.
+| Entrée | Action |
+| --- | --- |
+| Souris | Diriger le vaisseau en pilotage manuel |
+| `←` `↑` `→` `↓` | Piloter au clavier |
+| `M` | Basculer entre pilotage manuel et automatique |
+| Clic | Tirer un missile sur l’ennemi ou le boss le plus proche |
+| `T` | Activer ou couper le tir automatique |
+| `B` | Activer le bouclier pendant 4 secondes (recharge de 15 secondes) |
+| `G` | Activer ou désactiver l’anti-gravité |
+| `Espace` ou `Échap` | Mettre en pause ou reprendre |
+| `R` | Recommencer après une défaite ou une victoire |
+| `D` | Afficher les indicateurs de débogage |
+| `Maj` + clic | Ajouter un astéroïde à la position du curseur |
+| `P` / `O` | Ajouter une planète ou un obstacle |
 
-Le fond spatial est une galaxie spirale générée localement sur un canvas secondaire : noyau blanc-rosé décalé vers la gauche, deux bras bleus et violets aux contours diffus, nuages de gaz rose-magenta, bandes de poussière sombres et champ dense d'étoiles bleues, blanches et dorées. Sa composition elliptique et inclinée évoque une galaxie vue de biais. Il n'utilise aucune image distante et reste disponible hors ligne. La texture fixe est mise en cache et recréée au redimensionnement; seules quelques étoiles du premier plan scintillent et se déplacent légèrement en parallaxe pendant la simulation. Le soleil et les planètes utilisent aussi des textures procédurales mises en cache : le soleil présente une granulation rouge-orange dense, des régions actives, des taches sombres, une couronne lumineuse et des éruptions animées; les planètes ont des bandes atmosphériques, un ombrage sphérique et des anneaux dessinés en deux couches autour de Saturne. Trois astéroïdes facettés, stationnaires et évitables complètent l'arène; **Maj + clic** en ajoute un à la position du curseur pendant la partie. Les zones d'influence restent cachées en jeu et apparaissent avec le mode debug.
+Le panneau **FLIGHT CONTROL** permet aussi de régler la vitesse, le nombre de cristaux, la portée défensive des chasseurs, le comportement de la flotte et le nombre d’avions alliés ou ennemis.
 
-## Commandes
+## Exécution locale
 
-- **Entrée** ou bouton **JOUER** : commencer depuis l'écran d'accueil.
-- Après une défaite : **RECOMMENCER CE NIVEAU** ou **R** pour rejouer le niveau perdu; **RECOMMENCER AU NIVEAU 1** pour redémarrer la campagne.
-- **Espace**, **Échap** ou bouton **PAUSE** : suspendre/reprendre la simulation et ses minuteries.
-- À la fin d'une étape : le panneau **OBJECTIF ATTEINT** arrête la simulation jusqu'au clic sur **PASSER À L'ÉTAPE**.
-- **Souris** : en mode manuel, dirige le vaisseau vers la position du pointeur avec un steering d'arrivée; le vaisseau ralentit en s'approchant de la cible.
-- Un repère circulaire vert apparaît à côté du pointeur en mode manuel et le suit rapidement pour visualiser la cible du vaisseau.
-- **Bouton PILOTAGE AUTOMATIQUE** ou **M** : activer l'IA depuis le mode manuel initial; le même bouton permet ensuite de revenir au pilotage manuel à la souris. Le pilotage automatique, la fuite, l'évitement et la gravité n'imposent pas leur trajectoire au joueur en mode manuel. Les chasseurs, eux, conservent leur IA.
-- **Clic** : tirer vers le chasseur ou le boss le plus proche.
-- **T** : activer ou couper le tir automatique.
-- **B** ou bouton de bouclier : protéger toute l'escadrille pendant 4 secondes; recharge de 15 secondes.
-- **G** : activer ou désactiver l'anti-gravité.
-- **D** : visualiser les projections d'évitement et les cercles de collision.
-- **Espace**, **Échap** ou **PAUSE** : suspendre ou reprendre la partie sans faire avancer les vagues, les missiles ou les rechargements.
-- **Maj + clic** : ajouter un astéroïde à la position du curseur.
-- **P / O** : ajouter une planète ou un petit obstacle au curseur.
-- **Trous noirs A/B** : entrer dans l'un pour ressortir par l'autre; ils sont éloignés des planètes et se rechargent en 3 secondes.
-- **Panneau FLIGHT CONTROL** : régler la vitesse, choisir de 8 à 60 cristaux, ajuster la portée de défense rouge de 80 à 300 px et ajouter jusqu'à 20 avions supplémentaires dans chaque escadrille. Le bouton ⚙️ replie le panneau.
-- **Comportement de flotte** : `MISSION` poursuit les cristaux (mode initial), `ESSAIM` ajoute séparation, alignement et cohésion, et `PATROUILLE` suit un circuit elliptique par projection sur ses segments.
-- Un chasseur rouge ou une planète qui touche l'avion blanc du joueur termine immédiatement la partie, quelle que soit la difficulté. Le bouclier actif protège des chasseurs mais pas des planètes. Le pilotage automatique donne priorité à l'évitement des corps célestes; en mode manuel, le joueur doit les éviter lui-même. Les avions blancs alliés peuvent être interceptés sans terminer la partie. **R** ou le bouton de reprise relance la partie.
-- Le meilleur score est affiché au HUD et sauvegardé localement dans le navigateur.
-- Le radar tactique en bas à gauche place les chasseurs rouges autour de votre avion; ceux hors de la portée radar apparaissent au bord du cercle.
+Prérequis : Git, un navigateur moderne et Python 3 (ou l’extension Live Server de VS Code).
 
-Chaque cristal ramassé par l’avion joueur ou un allié rapporte des points et fournit les bonus indiqués ci-dessus. Le stock est plafonné à 50; recevoir des munitions interrompt le rechargement si le chargeur n'est plus vide. Détruire un chasseur rapporte 50 points. La victoire nécessite de terminer les quatre premiers objectifs puis de détruire le boss; le contact fatal avec un chasseur, le boss ou un corps céleste termine immédiatement la partie.
+```bash
+git clone https://github.com/aymenabouzya/SteeringBehavioursM2IA2_Casa_Aymen_ABOUZYA_G1.git
+cd SteeringBehavioursM2IA2_Casa_Aymen_ABOUZYA_G1
+python -m http.server 8000
+```
 
-## Architecture et steering
+Sous Windows, si la commande `python` n’existe pas, utiliser `py -m http.server 8000`. Sous macOS ou Linux, utiliser `python3 -m http.server 8000` si nécessaire.
 
-`index.html` relie les modules dans l'ordre de leurs dépendances : p5.js, `vehicle.js`, entités et comportements, `boss.js`, règles, HUD, puis `sketch.js`. Le fichier de style est chargé par la même page. `sketch.js` orchestre la simulation et l'affichage; il ne remplace pas les calculs de locomotion des véhicules.
+Ouvrir ensuite `http://localhost:8000`. Le jeu utilise p5.js fourni dans `libraries/` et peut fonctionner hors ligne une fois le dépôt cloné.
 
-`Vehicle` fournit les vecteurs, `seek`/`arrive`, `applyForce`, `update` et les bords. `Ship` étend cette base et réutilise le passage d'un bord à l'autre du canvas. Son apparence ajoute un fuselage, des ailes, une verrière et des jets; le roulis visuel suit l'accélération latérale avec amortissement et la poussée suit l'accélération. Ces détails n'interviennent pas dans les règles de locomotion héritées. En mode manuel, `Ship.steerToPointer()` utilise `arrive` vers le pointeur de la souris, puis applique cette force avec `applyForce`; un repère circulaire vert suit rapidement le pointeur, en rattrapant 82 % de son déplacement à chaque image. Le pilote doit éviter les planètes. Le mode `MISSION` choisit le cristal vivant le plus proche, fuit les chasseurs rouges, évite les corps célestes et sépare les appareils proches. Si un corps céleste menace sa trajectoire, le pilotage automatique donne priorité à la force d'évitement au seek. Le contact avec le soleil ou une planète termine immédiatement la partie; le bouclier ne protège que des chasseurs. Le mode `ESSAIM` ajoute les forces distinctes d'alignement et de cohésion; les forces sont additionnées puis bornées par `maxForce`. Le mode `PATROUILLE` anticipe sa position, projette ce point sur chaque segment du circuit, puis seek une cible légèrement en avant de la projection. L'évitement prédictif, la gravité, la poursuite des cibles et le wander des cristaux restent disponibles pour le pilotage autonome.
+## Principe algorithmique
 
-Les comportements réutilisent les principes des autres exemples du dépôt sans dupliquer ni modifier la locomotion de `Vehicle` :
+### Modèle de Reynolds
 
-- `flocking.js` calcule séparément séparation, alignement et cohésion dans un voisinage local; `ship.js` compose ces forces selon le mode choisi.
-- `pathFollowing.js` projette un point anticipé sur le circuit avant de calculer le steering de patrouille.
-- `ship.js` combine arrive/seek, fuite, évitement prédictif, séparation et gravité; en manuel, `steerToPointer()` suit le pointeur de la souris avec arrive.
-- `hunter.js` applique la poursuite et l'interception des avions menaçant les cristaux; `target.js` combine wander et fuite; `missile.js` poursuit une position prédite.
-- `obstacle.js` définit des corps stationnaires qui restent dans la hiérarchie `Vehicle`; `gameRules.js` isole les collisions et la collecte; `hud.js` affiche l'état fourni par le contrôleur.
-- `blackHole.js` dessine les deux portails appariés et gère le transfert du joueur et leur recharge; `gameRules.js` vérifie les positions éloignées des corps célestes.
+Les véhicules de la simulation héritent de `Vehicle`. Leur état de locomotion comprend une position, une vitesse et une accélération représentées par des `p5.Vector`.
 
-Les réseaux neuronaux de voitures et les séquences génétiques de missiles sont des systèmes d'apprentissage différents des comportements réactifs de ce jeu; ils ne remplacent pas son steering.
+Un comportement de pilotage calcule une force de steering à partir d’une vitesse désirée et de la vitesse actuelle :
 
-## Déploiement et présentation
+```text
+direction = cible - position
+vitesseDésirée = direction normalisée × vitesse maximale
+steering = vitesseDésirée - vitesse actuelle
+steering limitée à maxForce
+```
 
-- **GitHub Pages** : publier le dépôt depuis sa racine puis ouvrir `6-ObstacleAvoidance/`.
-- **IDE** : à compléter par l'étudiant.
-- **Modèles d'IA utilisés** : à compléter selon les outils réellement utilisés.
-- **Capture d'écran** : à ajouter après la partie de démonstration.
+La force est appliquée avec `applyForce()`, puis `update()` intègre l’accélération, la vitesse et la position. Les comportements indiquent comment un véhicule doit s’orienter ; ils ne remplacent pas directement sa locomotion.
 
-## MON EXPERIENCE
+### Seek et Arrival
 
-- Pourquoi ai-je choisi le thème spatial ?
-- Comment seek, arrive et l'évitement ont-ils modifié le mouvement du vaisseau ?
-- Quels réglages ai-je changés pour rendre les chasseurs intéressants ?
-- Quelle difficulté ai-je rencontrée et comment l'ai-je résolue ?
-- Qu'est-ce que je souhaite améliorer dans une prochaine version ?
+`seek` dirige un véhicule vers une cible en lui donnant une vitesse désirée dans cette direction. `arrive` adapte cette vitesse à la distance : le véhicule ralentit en approchant, ce qui évite les changements de direction brusques. Le pilotage manuel emploie Arrival pour rejoindre la cible de souris ; le joueur peut aussi contrôler son vaisseau avec les flèches.
+
+### Composition des comportements
+
+En mode automatique, le vaisseau du joueur poursuit le cristal vivant le plus proche. Sa trajectoire combine les forces pertinentes au contexte :
+
+- évitement prédictif des obstacles et corps célestes, prioritaire lorsque la trajectoire est menacée ;
+- fuite des chasseurs rouges proches ;
+- séparation pour limiter les regroupements entre avions ;
+- attraction gravitationnelle, ou anti-gravité lorsqu’elle est activée.
+
+Les modes de flotte proposent trois compositions : `MISSION` pour rechercher les cristaux, `ESSAIM` pour combiner séparation, alignement et cohésion, et `PATROUILLE` pour suivre un circuit. Les chasseurs rouges gardent les cristaux et interceptent les avions blancs qui s’en approchent. Les missiles poursuivent une position prédite de leur cible.
+
+### Campagne, cristaux et combats
+
+- La campagne comporte 20 objectifs : collecte de cristaux, survie, élimination de chasseurs, collecte de cristaux bonus et combats de boss.
+- Les boss apparaissent aux niveaux 5, 10, 15 et 20 ; leur nombre de points de vie augmente au fil de la campagne.
+- Un cristal standard rapporte 25 points et une munition. Les cristaux bonus dorés et violets rapportent 75 points ; les dorés rechargent les missiles et les violets restaurent le bouclier. Les cristaux mauves rapportent 250 points.
+- Les chasseurs et les boss peuvent être attaqués avec des missiles. Chaque missile qui atteint un boss lui retire un point de vie.
+- Les meilleurs scores sont conservés séparément selon la difficulté dans `localStorage`.
+- Les trous noirs A et B téléportent le joueur de l’un à l’autre et se rechargent pendant 3 secondes.
+
+Trois difficultés modifient le nombre initial de chasseurs et les vagues de renforts :
+
+| Difficulté | Chasseurs initiaux | Renforts | Points de vie initiaux du boss |
+| --- | ---: | --- | ---: |
+| Cadet | 7 | Toutes les 35 secondes, jusqu’à 18 chasseurs | 3 |
+| Pilote | 12 | Toutes les 25 secondes, jusqu’à 28 chasseurs | 5 |
+| As | 16 | Toutes les 20 secondes, jusqu’à 38 chasseurs | 7 |
+
+### Décor procédural
+
+La galaxie, les planètes et le soleil sont dessinés localement avec p5.js, sans images distantes. La texture de fond et les surfaces célestes sont générées puis mises en cache ; quelques étoiles de premier plan scintillent et se déplacent en parallaxe. Les astéroïdes restent stationnaires et peuvent être évités.
+
+## Architecture
+
+| Fichier | Responsabilité |
+| --- | --- |
+| `index.html` | Structure de la page, interface, chargement des scripts et des bibliothèques |
+| `style.css` | Mise en page, panneaux, briefing et affichage du jeu |
+| `sketch.js` | Boucle p5.js, état de la partie, entrées, rendu et coordination des entités |
+| `vehicle.js` | Base des véhicules, locomotion et comportements de pilotage communs |
+| `ship.js` | Vaisseaux, pilotage manuel et composition du steering automatique |
+| `hunter.js` | Chasseurs rouges, défense des cristaux et interception |
+| `boss.js` | Boss de campagne et points de vie |
+| `missile.js` | Missiles et poursuite des cibles |
+| `target.js` | Cristaux et comportements associés |
+| `obstacle.js` | Corps célestes stationnaires et obstacles |
+| `asteroid.js` | Astéroïdes facettés |
+| `blackHole.js` | Portails appariés et téléportation |
+| `flocking.js` | Séparation, alignement et cohésion de l’essaim |
+| `pathFollowing.js` | Projection et suivi du chemin de patrouille |
+| `gameRules.js` | Difficultés, objectifs, progression et règles de collision |
+| `hud.js` | Mise à jour des diagnostics et de l’interface |
+| `tests/game.test.mjs` | Tests des comportements, règles, commandes et interface |
+| `tests/step-1.test.mjs` | Tests unitaires des comportements de base |
+
+## Tests
+
+Prérequis : Node.js.
+
+```bash
+node --test tests/*.test.mjs
+```
+
+La suite vérifie notamment :
+
+- les comportements de steering et la limitation des forces ;
+- l’évitement prédictif, le pilotage manuel et automatique ;
+- le flocking, le suivi de chemin et les comportements des chasseurs ;
+- les règles des 20 niveaux, des difficultés, des boss et des cristaux ;
+- la pause, les commandes, la progression et le redémarrage ;
+- le chargement des modules et la cohérence de l’interface.
+
+## Technologies
+
+- JavaScript sans framework
+- p5.js
+- HTML et CSS
+- Node.js Test Runner
+
+## Limites
+
+- Le meilleur score et la difficulté sélectionnée sont enregistrés localement dans le navigateur.
+- Une collision du joueur avec un chasseur ou un corps céleste peut terminer la partie ; le bouclier protège des chasseurs, mais pas des planètes ni des boss.
+- Le jeu est une démonstration pédagogique de steering behaviors, pas une simulation physique réaliste.
+
+## Référence
+
+Craig W. Reynolds, *Steering Behaviors for Autonomous Characters*, GDC 1999.
