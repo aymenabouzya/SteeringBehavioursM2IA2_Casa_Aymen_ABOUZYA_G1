@@ -1,4 +1,4 @@
-# 🚀 Orbital Drift — Course aux cristaux
+# 🚀 Orbital Drift 
 
 [Code source](https://github.com/aymenabouzya/SteeringBehavioursM2IA2_Casa_Aymen_ABOUZYA_G1)
 
