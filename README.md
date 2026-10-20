@@ -1,4 +1,4 @@
-# Orbital Drift — Course aux cristaux
+# 🚀 Orbital Drift — Course aux cristaux
 
 [Code source](https://github.com/aymenabouzya/SteeringBehavioursM2IA2_Casa_Aymen_ABOUZYA_G1)
 
@@ -10,6 +10,8 @@ Le projet transforme des comportements de pilotage en une campagne jouable de 20
 
 - [Jouer en ligne avec GitHub Pages](https://aymenabouzya.github.io/SteeringBehavioursM2IA2_Casa_Aymen_ABOUZYA_G1/)
 - [Code source du projet](https://github.com/aymenabouzya/SteeringBehavioursM2IA2_Casa_Aymen_ABOUZYA_G1)
+
+![Capture d’écran de l’interface et du briefing d’Orbital Drift](docs/screenshots/orbital-drift.png)
 
 ## Jouer
 
